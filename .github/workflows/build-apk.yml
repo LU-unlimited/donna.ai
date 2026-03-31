@@ -27,12 +27,12 @@ jobs:
 
       # GitHub's ubuntu-latest runner ships with Android SDK at $ANDROID_HOME.
       # We just need to accept licences and ensure platform-35 + build-tools are present.
-      - name: Accept Android SDK licences & install platform 36
+      - name: Accept Android SDK licences & install platform 35
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
-            "platforms;android-36" \
-            "build-tools;36.0.0" \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
             "platform-tools"
 
       - name: Install dependencies
