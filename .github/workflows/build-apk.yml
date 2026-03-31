@@ -19,11 +19,11 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Set up Java 17
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       # GitHub's ubuntu-latest runner ships with Android SDK at $ANDROID_HOME.
       # We just need to accept licences and ensure platform-35 + build-tools are present.
