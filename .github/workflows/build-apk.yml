@@ -1,0 +1,60 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main, claude/donna-scheduling-assistant-a52Nj]
+  workflow_dispatch:   # lets you trigger it manually from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env for build
+        run: |
+          # These are placeholder values so Vite builds without errors.
+          # The real keys are entered by the user at runtime inside the app.
+          echo "VITE_ANTHROPIC_API_KEY=build-placeholder" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID=build-placeholder" >> .env
+
+      - name: Build web assets
+        run: npm run build
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x android/gradlew
+
+      - name: Build debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: donna-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
